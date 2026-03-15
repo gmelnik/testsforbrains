@@ -1,0 +1,6 @@
+export { GameCard } from './GameCard'
+export { MultipleChoice } from './MultipleChoice'
+export { PatternPuzzle } from './PatternPuzzle'
+export { Riddle } from './Riddle'
+export { GameResult } from './GameResult'
+export { Timer } from './Timer'
