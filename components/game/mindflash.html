@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mind Flash Game</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      color: #1f2937;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 520px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+      padding: 24px;
+      text-align: center;
+    }
+
+    h1 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 2rem;
+    }
+
+    .subtitle {
+      margin-bottom: 18px;
+      color: #4b5563;
+      font-size: 1rem;
+    }
+
+    .status {
+      margin: 16px 0;
+      font-size: 1.1rem;
+      min-height: 28px;
+      font-weight: 600;
+    }
+
+    .scoreboard {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      flex: 1;
+      min-width: 120px;
+      background: #f9fafb;
+      border-radius: 14px;
+      padding: 12px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .card-label {
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+
+    .card-value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin: 20px 0;
+    }
+
+    .tile {
+      height: 120px;
+      border: none;
+      border-radius: 18px;
+      cursor: pointer;
+      transition: transform 0.08s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+      opacity: 0.9;
+    }
+
+    .tile:active {
+      transform: scale(0.97);
+    }
+
+    .tile:disabled {
+      cursor: not-allowed;
+    }
+
+    .tile.red {
+      background: #ef4444;
+    }
+
+    .tile.blue {
+      background: #3b82f6;
+    }
+
+    .tile.green {
+      background: #10b981;
+    }
+
+    .tile.yellow {
+      background: #f59e0b;
+    }
+
+    .tile.active {
+      opacity: 1;
+      box-shadow: 0 0 0 6px rgba(17, 24, 39, 0.08), 0 0 24px rgba(0, 0, 0, 0.18);
+      transform: scale(1.03);
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    button.control-btn {
+      background: #111827;
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    button.control-btn:hover {
+      opacity: 0.92;
+    }
+
+    .hint {
+      margin-top: 18px;
+      color: #6b7280;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 480px) {
+      .tile {
+        height: 95px;
+      }
+
+      h1 {
+        font-size: 1.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>Mind Flash</h1>
+    <div class="subtitle">Watch the pattern. Repeat it. Grow your memory power.</div>
+
+    <div class="scoreboard">
+      <div class="card">
+        <div class="card-label">Level</div>
+        <div class="card-value" id="level">0</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Best</div>
+        <div class="card-value" id="best">0</div>
+      </div>
+    </div>
+
+    <div class="status" id="status">Press Start to play</div>
+
+    <div class="grid">
+      <button class="tile red" data-index="0" aria-label="Red tile"></button>
+      <button class="tile blue" data-index="1" aria-label="Blue tile"></button>
+      <button class="tile green" data-index="2" aria-label="Green tile"></button>
+      <button class="tile yellow" data-index="3" aria-label="Yellow tile"></button>
+    </div>
+
+    <div class="controls">
+      <button class="control-btn" id="startBtn">Start Game</button>
+      <button class="control-btn" id="restartBtn">Restart</button>
+    </div>
+
+    <div class="hint">
+      Tip: each round adds one more color to remember.
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const tiles = Array.from(document.querySelectorAll(".tile"));
+      const statusEl = document.getElementById("status");
+      const levelEl = document.getElementById("level");
+      const bestEl = document.getElementById("best");
+      const startBtn = document.getElementById("startBtn");
+      const restartBtn = document.getElementById("restartBtn");
+
+      const STORAGE_KEY = "mind_flash_best_score";
+
+      let sequence = [];
+      let playerSequence = [];
+      let level = 0;
+      let acceptingInput = false;
+      let isShowingSequence = false;
+
+      const bestScore = Number(localStorage.getItem(STORAGE_KEY) || 0);
+      bestEl.textContent = bestScore;
+
+      function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
+      function randomTileIndex() {
+        return Math.floor(Math.random() * 4);
+      }
+
+      function updateStatus(message) {
+        statusEl.textContent = message;
+      }
+
+      function updateLevel() {
+        levelEl.textContent = level;
+      }
+
+      function saveBestScore() {
+        const currentBest = Number(localStorage.getItem(STORAGE_KEY) || 0);
+        if (level > currentBest) {
+          localStorage.setItem(STORAGE_KEY, String(level));
+          bestEl.textContent = String(level);
+        }
+      }
+
+      async function flashTile(index, duration = 500) {
+        const tile = tiles[index];
+        tile.classList.add("active");
+        await sleep(duration);
+        tile.classList.remove("active");
+        await sleep(150);
+      }
+
+      async function showSequence() {
+        isShowingSequence = true;
+        acceptingInput = false;
+        updateStatus("Watch carefully...");
+        disableTiles(true);
+
+        for (const index of sequence) {
+          await flashTile(index, 450);
+        }
+
+        isShowingSequence = false;
+        acceptingInput = true;
+        updateStatus("Now it's your turn");
+        disableTiles(false);
+      }
+
+      function disableTiles(disabled) {
+        tiles.forEach(tile => {
+          tile.disabled = disabled;
+        });
+      }
+
+      async function nextRound() {
+        playerSequence = [];
+        level += 1;
+        updateLevel();
+        sequence.push(randomTileIndex());
+        await sleep(500);
+        await showSequence();
+      }
+
+      async function startGame() {
+        sequence = [];
+        playerSequence = [];
+        level = 0;
+        updateLevel();
+        updateStatus("Get ready...");
+        disableTiles(true);
+        await sleep(600);
+        await nextRound();
+      }
+
+      async function handlePlayerMove(index) {
+        if (!acceptingInput || isShowingSequence) {
+          return;
+        }
+
+        playerSequence.push(index);
+        await flashTile(index, 220);
+
+        const currentStep = playerSequence.length - 1;
+
+        if (playerSequence[currentStep] !== sequence[currentStep]) {
+          acceptingInput = false;
+          disableTiles(true);
+          saveBestScore();
+          updateStatus("Oops! Wrong tile. Press Restart to try again.");
+          return;
+        }
+
+        if (playerSequence.length === sequence.length) {
+          acceptingInput = false;
+          disableTiles(true);
+          updateStatus("Great job! Next level...");
+          saveBestScore();
+          await sleep(900);
+          await nextRound();
+        }
+      }
+
+      tiles.forEach(tile => {
+        tile.addEventListener("click", () => {
+          const index = Number(tile.dataset.index);
+          handlePlayerMove(index);
+        });
+      });
+
+      startBtn.addEventListener("click", startGame);
+      restartBtn.addEventListener("click", startGame);
+
+      disableTiles(true);
+    })();
+  </script>
+</body>
+</html>
