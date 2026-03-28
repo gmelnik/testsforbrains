@@ -36,6 +36,7 @@ export function useDailyLimit() {
   }, [fetchTodayCount])
 
   const remainingGames = isPremium ? Infinity : Math.max(0, FREE_DAILY_LIMIT - gamesPlayedToday)
+  const bonusGames = isPremium ? Infinity : Math.max(remainingGames, gamesPlayedToday*2)
   const hasReachedLimit = !isPremium && remainingGames <= 0
 
   return {
