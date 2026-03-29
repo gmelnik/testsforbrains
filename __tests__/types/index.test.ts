@@ -19,6 +19,12 @@ describe('FREE_DAILY_LIMIT', () => {
   })
 })
 
+describe('BONUS_LEVEL', () => {
+  it('equals 10', () => {
+    expect(BONUS_LEVEL).toBe(10)
+  })
+})
+
 describe('FREE_CATEGORIES_LIMIT', () => {
   it('equals 2', () => {
     expect(FREE_CATEGORIES_LIMIT).toBe(2)
