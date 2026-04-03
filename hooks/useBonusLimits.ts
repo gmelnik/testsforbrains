@@ -22,6 +22,8 @@ export function useBonusLimits() {
     setLoading(true)
     setError(null)
 
+    setBonusGame(false)
+
     try {
       // Check daily limit for free users
       if (!isPremium) {
