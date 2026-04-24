@@ -10,6 +10,7 @@ BrainSpark is a fun, game-based learning platform for kids ages 6-12. It feature
 - **Backend:** Supabase (PostgreSQL + Auth)
 - **Payments:** Stripe
 - **Deployment:** Vercel-ready
+- All open source
 
 ## Features
 
