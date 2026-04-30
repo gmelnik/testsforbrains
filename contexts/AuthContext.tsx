@@ -5,6 +5,8 @@ import { User, Session } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/client'
 import { Profile, Subscription } from '@/types'
 import { Game, LeaderBoard} from '@/types'
+import { Epic, LeaderBoard} from '@/types'
+
 
 interface AuthContextType {
   user: User | null
