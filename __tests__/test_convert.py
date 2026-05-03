@@ -2,6 +2,14 @@ from pathlib import Path
 
 from assistant.filesystem._convert import bytes_to_str
 
+SAMPLE_FILE_DIR = Path(__file__).parent / "test_data"
+SAMPLE_DOCX = SAMPLE_FILE_DIR / "Formatting Test.docx"
+SAMPLE_PDF = SAMPLE_FILE_DIR / "simple_pdf.pdf"
+SAMPLE_PPTX = SAMPLE_FILE_DIR / "sample_presentation.pptx"
+SAMPLE_PNG = SAMPLE_FILE_DIR / "blank_image.png"
+SAMPLE_CSV = SAMPLE_FILE_DIR / "sample_data.csv"
+SAMPLE_XLSX = SAMPLE_FILE_DIR / "sample_data.xlsx"
+SAMPLE_HTML = SAMPLE_FILE_DIR / "sample_page.html"
 
 async def test_docx_bytes_to_str() -> None:
     expected_result = """# My Heading 1
