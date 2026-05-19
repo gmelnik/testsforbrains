@@ -21,7 +21,6 @@ namespace Conference.Specflow.Features.Integration.Management
         private static TechTalk.SpecFlow.ITestRunner testRunner;
         
 #line 1 "ConferenceConfigurationWithIntegration.feature"
-#line hidden
         
         public ConferenceConfigurationScenariosForCreatingAndEditingConferenceSettingsWithEventsAndCommandsFeature()
         {
@@ -47,6 +46,7 @@ namespace Conference.Specflow.Features.Integration.Management
         
         public virtual void TestInitialize()
         {
+            testRunner = testRunner.selfInitialize();
         }
         
         public virtual void ScenarioTearDown()
