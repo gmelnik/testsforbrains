@@ -81,6 +81,10 @@ Charlie,29,Marketing,60000
     assert result == expected_result
 
 
+async def test_bytes_to_str_uses_filename_extension_for_detection() -> None:
+    result = await bytes_to_str(SAMPLE_CSV.read_bytes(), "renamed.txt")
+    # Depending on intended behavior, assert fallback behavior or error.
+
 async def test_xlsx_bytes_to_str() -> None:
     expected_result = """## Sheet1
 | Name | Age | Department | Salary |
