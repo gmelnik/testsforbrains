@@ -71,6 +71,11 @@ async def test_image_bytes_to_str() -> None:
     assert result.startswith("data:image/png;base64,")
 
 
+async def test_bytes_to_str_unknown_file_type_falls_back_to_utf8() -> None:
+    result = await bytes_to_str(b"hello", "file.unknown")
+    assert result == "hello"
+
+
 async def test_csv_bytes_to_str() -> None:
     expected_result = """Name,Age,Department,Salary
 Alice,30,HR,50000
