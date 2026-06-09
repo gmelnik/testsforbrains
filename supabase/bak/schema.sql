@@ -394,25 +394,3 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Function to check daily game limit for free users
-CREATE OR REPLACE FUNCTION check_daily_limit(p_user_id UUID)
-RETURNS INTEGER AS $$
-DECLARE
-  v_tier subscription_tier;
-  v_today_count INTEGER;
-BEGIN
-  SELECT tier INTO v_tier FROM subscriptions WHERE user_id = p_user_id;
-
-  IF v_tier = 'premium' THEN
-    RETURN -1; -- Unlimited
-  END IF;
-
-  SELECT COUNT(*) INTO v_today_count
-  FROM game_sessions
-  WHERE user_id = p_user_id
-    AND DATE(created_at) = CURRENT_DATE
-    AND status = 'completed';
-
-  RETURN 5 - v_today_count; -- 5 free games per day
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
