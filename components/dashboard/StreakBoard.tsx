@@ -37,9 +37,6 @@ export function StreakBoard({ category, gamesPlayed = 0, locked = false }: Categ
           )}
         </div>
 
-        <h3 className="text-lg font-bold text-gray-900">{category.name}</h3>
-        <p className="mt-1 text-sm text-gray-500">{category.description}</p>
-
         {gamesPlayed > 0 && (
           <p className="mt-4 text-sm text-gray-600">
             {gamesPlayed} games played
@@ -54,6 +51,7 @@ export function StreakBoard({ category, gamesPlayed = 0, locked = false }: Categ
       <Link href="/pricing" className="block">
         {content}
       </Link>
+      <p> Pricing info : LINK</p>
     )
   }
 
