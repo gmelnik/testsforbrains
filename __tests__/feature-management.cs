@@ -154,7 +154,7 @@ this.FeatureBackground();
                         "$50",
                         "100"});
 #line 37
- testRunner.When("these Seat Types are created", ((string)(null)), table2);
+ testRunner.When("these new Seat Types are created", ((string)(null)), table2);
 #line 43
  testRunner.Then("the events for creating the Seat Type are emitted");
 #line hidden
