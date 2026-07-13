@@ -233,6 +233,10 @@ this.FeatureBackground();
                     "bout the problem");
 #line 69
  testRunner.And("the total amount should be of $600");
+
+#line 71
+this.ScenarioSetup(scenarioInfo);
+
 #line hidden
             this.ScenarioCleanup();
         }
